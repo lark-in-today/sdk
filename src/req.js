@@ -3,40 +3,67 @@ const store = require('./storage');
 const crypto = require('./crypto');
 const baseUrl = require('./config').baseUrl;
 
-function genKey() {
-  let keypair = crypto.Ed25519.gen();
+function auth(res, url, params) {
+  if (res.data.msg.match(/WARNING_000/)) {
 
-  let sk = keypair.secretKey;
-  let pk = keypair.publicKey;
-  let seed = keypair.seed;
+    let _tk = '' + res.data.token;
+    let token = crypto.decodeBase64(res.data.token);
+    let sk = crypto.decodeBase64(store.get('secret_key'));
+    let stoken = crypto.encodeBase64(crypto.Ed25519.sign(token, sk));
 
-  store.set('seed', seed);
-  store.set('public_key', pk);
-  store.set('secret_key', sk);
+    store.set('token', _tk);
+    store.set('signed_token', stoken);
 
-  return pk;
+    let ret = crypto.Ed25519.verify(
+      crypto.decodeBase64(_tk),
+      crypto.decodeBase64(stoken),
+      crypto.decodeBase64(store.get('public_key')),
+    );
+
+    return Request.get(url, params);
+  } else if(res.data.msg.match(/OK_000/)) {
+    return Request.get(url, params);
+  } else {
+    return res.data;
+  }
 }
 
-function get(url, params) {
-  let pk = store.get('public_key');
-  let token = store.get('token');
+class Request {
+  static request(method, url, params) {
+    let pk = store.get('public_key');
+    let token = store.get('token');
+    let stoken = store.get('signed_token');
 
-  if (pk === undefined) { pk = genKey(); }
-  if (token === undefined) { token = ''; }
+    if (pk === undefined) { pk = crypto.genKey(); }
+    if (token === undefined) { token = ''; }
+    if (stoken === undefined) { stoken = ''; }
 
+    return axios.request({
+      url: `${baseUrl}/${url}`,
+      headers: {
+	'public-key-header': pk,
+	'token-header': token,
+	'signed-token-header': stoken
+      },
+      method: method,
+    }).then(
+      res => auth(res, url, params)
+    );
+  }
 
-  axios.get(`${baseUrl}/${url}`, {
-    'headers': {
-      'Public-Key-Header': pk,
-      'Token-Header': token
-    }
-  }).then(r => {
-    console.log(r);
-  })
+  static get(url, params) {
+    return Request.request('GET', url, params);
+  }
+
+  static post(url, params) {
+    return Request.request('POST', url, params);
+  }
 }
 
 function main() {
-  get('hello');
+  Request.get('hello').then(r => {
+    console.log(r);
+  })
 }
 
 main();
