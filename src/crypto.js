@@ -1,7 +1,6 @@
 const nacl = require('tweetnacl');
 const {
-  encodeBase64,
-  decodeBase64
+  encodeBase64, decodeBase64
 } = require('tweetnacl-util');
 const store = require('./storage');
 const config = require('./config');
@@ -32,27 +31,29 @@ class Ed25519 {
   }
 }
 
-function genKey() {
-  let keypair = {};
-  if (!config.debug) {
-    keypair = Ed25519.gen();
-  } else {
-    keypair = Ed25519.genFromSeed();
+class Crypto {
+  static genKey() {
+    let keypair = {};
+    if (!config.debug) {
+      keypair = Ed25519.gen();
+    } else {
+      keypair = Ed25519.genFromSeed();
+    }
+    
+    let sk = encodeBase64(keypair.secretKey);
+    let pk = encodeBase64(keypair.publicKey);
+    let seed = encodeBase64(keypair.seed);
+
+    store.set('seed', seed);
+    store.set('public_key', pk);
+    store.set('secret_key', sk);
+
+    return pk;
   }
-  
-  let sk = encodeBase64(keypair.secretKey);
-  let pk = encodeBase64(keypair.publicKey);
-  let seed = encodeBase64(keypair.seed);
-
-  store.set('seed', seed);
-  store.set('public_key', pk);
-  store.set('secret_key', sk);
-
-  return pk;
 }
 
-module.exports = {
-  Ed25519,
-  encodeBase64, decodeBase64,
-  genKey
-}
+Crypto.__proto__.Ed25519 = Ed25519;
+Crypto.__proto__.decodeBase64 = decodeBase64;
+Crypto.__proto__.encodeBase64 = encodeBase64;
+
+module.exports = Crypto;

@@ -1,8 +1,8 @@
 const store = require('store');
 
-function get(k) { return store.get(k) }
-function set(k, v) { return store.set(k, v) }
-
-module.exports = {
-  get, set
+class Storage {
+  static get(k) { return store.get(k) }
+  static set(k, v) { return store.set(k, v) }
 }
+
+module.exports = Storage;

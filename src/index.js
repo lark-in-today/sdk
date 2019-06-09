@@ -1,11 +1,1 @@
-const { auth } from './modules';
-
-const config = {
-  
-}
-
-function main() {
-  auth();
-}
-
-main();
+module.exports = 'hello, world!';
