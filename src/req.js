@@ -4,8 +4,12 @@ const crypto = require('./crypto');
 const baseUrl = require('./config').baseUrl;
 
 class Requests {
-  static auth(res, url, params) {
+  static auth(res, url, params, data) {
     let method = res.config.method;
+    if (res.data.err_msg) {
+      return res.data.err_msg;
+    }
+    
     if (res.data.msg.match(/WARNING_000/)) {
 
       let _tk = '' + res.data.token;
@@ -22,15 +26,15 @@ class Requests {
 	crypto.decodeBase64(store.get('public_key')),
       );
 
-      return Requests[method](url, params);
+      return Requests[method](url, params, data);
     } else if(res.data.msg.match(/OK_000/)) {
-      return Requests[method](url, params);
+      return Requests[method](url, params, data);
     } else {
       return res.data;
     }
   }
   
-  static request(method, url, params) {
+  static request(method, url, params, data) {
     let pk = store.get('public_key');
     let token = store.get('token');
     let stoken = store.get('signed_token');
@@ -39,7 +43,7 @@ class Requests {
     if (token === undefined) { token = ''; }
     if (stoken === undefined) { stoken = ''; }
 
-    return axios.request({
+    return axios({
       url: `${baseUrl + url}`,
       headers: {
 	'public-key-header': pk,
@@ -47,21 +51,23 @@ class Requests {
 	'signed-token-header': stoken
       },
       method: method,
+      params: params,
+      data: data,
     }).then(
-      res => Requests.auth(res, url, params)
+      res => Requests.auth(res, url, params, data)
     );
   }
 
-  static get(url, params) {
-    return Requests.request('GET', url, params);
+  static get(url, params, data) {
+    return Requests.request('GET', url, params, data);
   }
 
-  static put(url, params) {
-    return Requests.request('PUT', url, params);
+  static put(url, params, data) {
+    return Requests.request('PUT', url, params, data);
   }
   
-  static post(url, params) {
-    return Requests.request('POST', url, params);
+  static post(url, params, data) {
+    return Requests.request('POST', url, params, data);
   }
 }
 

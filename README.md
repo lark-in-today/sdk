@@ -1,8 +1,6 @@
-# Lark-in-server
+# Lark-in-sdk
 
-
-
-## Request
+## 00_auth_system
 
 #### Request Table
 
@@ -23,28 +21,4 @@ Server -->  Client: saved {public_key: signed_token}
 Client ->   Server: normal request
 ```
 
-# Models
-### Author
-
-```javascript
-const AuthorModel = {
-	ad: 1.0,
-	name: '',
-	avatar: '',
-	pubkey: '',
-	public: false,
-}
-
-```
-
-### Article
-
-```javascript
-const article = {
-	ad: 'x',
-	author: 'x',
-	title: 'xxx',
-	content: 'xxxx',
-	signature: 'xxxx',
-}
-```
+## 01_post_an_article

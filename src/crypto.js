@@ -4,6 +4,7 @@ const {
 } = require('tweetnacl-util');
 const store = require('./storage');
 const config = require('./config');
+const sha256 = require('js-sha256').sha256;
 
 class Ed25519 {
   static gen() {
