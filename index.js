@@ -1,1 +1,1 @@
-module.exports = require('./client.js');
+export SDK from './lib/index';
