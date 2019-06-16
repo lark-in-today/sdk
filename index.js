@@ -1,1 +1,6 @@
-export SDK from './lib/index';
+(function (factory) {
+	typeof define === 'function' && define.amd ? define(factory) :
+	factory();
+}(function () { 'use strict';
+	module.exports = require('./src/index.js');
+}));

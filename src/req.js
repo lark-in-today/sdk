@@ -9,7 +9,7 @@ class Requests {
     if (res.data.err_msg) {
       return res.data.err_msg;
     }
-    
+
     if (res.data.msg.match(/WARNING_000/)) {
 
       let _tk = '' + res.data.token;
@@ -48,7 +48,8 @@ class Requests {
       headers: {
 	'public-key-header': pk,
 	'token-header': token,
-	'signed-token-header': stoken
+	'signed-token-header': stoken,
+	'Access-Control-Allow-Origin': '*',
       },
       method: method,
       params: params,

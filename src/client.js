@@ -7,3 +7,5 @@ class Client {
     return r.get(`/_/verify?author=${author}`);
   }
 }
+
+export default Client;
