@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "main": "index.js",
   "license": "MIT",
-  "private": true,
-  "scrpts": {
-    "start": "node src/index.js"
+  "scripts": {
+    "start": "node src/index.js",
+    "convert": "npx babel src --out-dir lib"
   },
   "dependencies": {
     "axios": "^0.19.0",
@@ -13,5 +13,12 @@
     "store": "^2.0.12",
     "tweetnacl": "^1.0.1",
     "tweetnacl-util": "^0.15.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-plugin-transform-commonjs": "^1.1.5",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2"
   }
 }
