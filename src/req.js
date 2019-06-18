@@ -9,9 +9,8 @@ class Requests {
     if (res.data.err_msg) {
       return res.data.err_msg;
     }
-
+    
     if (res.data.msg.match(/WARNING_000/)) {
-
       let _tk = '' + res.data.token;
       let token = crypto.decodeBase64(res.data.token);
       let sk = crypto.decodeBase64(store.get('secret_key'));

@@ -23,8 +23,7 @@ class Ed25519 {
     return nacl.sign.detached.verify(msg, sign, pk);
   }
 
-  static genFromSeed() {
-    let seed = decodeBase64(config.seed);
+  static genFromSeed(seed) {
     let kp = nacl.sign.keyPair.fromSeed(seed);
     kp.seed = seed;
     
@@ -37,8 +36,10 @@ class Crypto {
     let keypair = {};
     if (!config.debug) {
       keypair = Ed25519.gen();
+    } else if(store.get('seed') != undefined) {
+      keypair = Ed25519.genFromSeed(store.get('seed'));
     } else {
-      keypair = Ed25519.genFromSeed();
+      keypair = Ed25519.genFromSeed(decodeBase64(config.seed));
     }
     
     let sk = encodeBase64(keypair.secretKey);

@@ -2,9 +2,9 @@ const r = require('./req');
 const store = require('store');
 
 class Client {
-  static verify() {
+  static author() {
     let author = store.get('author');
-    return r.get(`/_/verify?author=${author}`);
+    return r.get(`/_/exist?author=${author}`);
   }
 }
 
