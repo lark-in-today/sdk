@@ -25,9 +25,9 @@ class Requests {
 	crypto.decodeBase64(store.get('public_key')),
       );
 
-      return Requests[method](url, params, data);
+      return Requests[method](url, data, params);
     } else if(res.data.msg.match(/OK_000/)) {
-      return Requests[method](url, params, data);
+      return Requests[method](url, data, params);
     } else {
       return res.data;
     }
@@ -37,17 +37,20 @@ class Requests {
     let pk = store.get('public_key');
     let token = store.get('token');
     let stoken = store.get('signed_token');
+    let author = store.get('author');
 
     if (pk === undefined) { pk = crypto.genKey(); }
     if (token === undefined) { token = ''; }
     if (stoken === undefined) { stoken = ''; }
-
+    if (author === undefined) { author = 'default'; }
+    
     return axios({
       url: `${baseUrl + url}`,
       headers: {
 	'public-key-header': pk,
 	'token-header': token,
 	'signed-token-header': stoken,
+	'author-header': author,
 	'Access-Control-Allow-Origin': '*',
       },
       method: method,
@@ -58,15 +61,15 @@ class Requests {
     );
   }
 
-  static get(url, params, data) {
+  static get(url, data, params = {}) {
     return Requests.request('GET', url, params, data);
   }
 
-  static put(url, params, data) {
+  static put(url, data, params = {}) {
     return Requests.request('PUT', url, params, data);
   }
   
-  static post(url, params, data) {
+  static post(url, data, params = {}) {
     return Requests.request('POST', url, params, data);
   }
 }
